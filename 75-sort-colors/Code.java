@@ -16,7 +16,7 @@ class Solution {
                 nums[right] = 2;
                 right--;
             } else {
-                curr++;
+                curr += 1;
             }
         }
     }
