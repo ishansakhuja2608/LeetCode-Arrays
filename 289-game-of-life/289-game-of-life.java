@@ -1,48 +1,34 @@
 class Solution {
-    
-    private int[][] directions = new int[][]{{0,1},{1,0},{-1,0},{0,-1},{-1,-1},{-1,1},{1,-1},{1,1}};
     public void gameOfLife(int[][] board) {
-        for(int i = 0; i < board.length; i++) {
-            for(int j = 0; j < board[0].length; j++){
-            
-                if(board[i][j] == 1) {
-                    int active = getActive(board, i, j);
-                    if(active < 2 || active > 3)
-                        board[i][j] = -2; // it's gonna be 0 as per the conditions povided
+        int[] dx = new int[]{0, 0, 1, 1, 1, -1, -1, -1};
+        int[] dy = new int[]{1, -1, 1, -1, 0, 0, 1, -1};
+        
+        for(int row = 0; row < board.length; row++) {
+            for(int col = 0; col < board[0].length; col++) {
+                int liveNeighbors = 0;
+                for(int i = 0; i < 8; i++) {
+                    int currX = row + dx[i];
+                    int currY = col + dy[i];
+                    if(isValidNeighbor(currX, currY, board) && Math.abs(board[currX][currY]) == 1)
+                        liveNeighbors++;
                 }
-                else if(board[i][j] == 0) {
-                    int active = getActive(board, i, j);
-                    if(active == 3)
-                        board[i][j] = 3; // it's gonna be 1 as per the consitions
-                } 
+                if(board[row][col] == 1 && (liveNeighbors < 2 || liveNeighbors > 3))
+                    board[row][col] = -1; // will update to 0 later
+                if(board[row][col] == 0 && liveNeighbors == 3)
+                    board[row][col] = 2; // will update to 1 later
             }
         }
-        updateBoard(board);
-        return;
-    }
-    
-    private void updateBoard(int[][] board){
-        for(int i = 0; i < board.length; i++){
-            for(int j = 0; j < board[0].length; j++){
-                if(board[i][j] == -2)
-                    board[i][j] = 0;
-                if(board[i][j] == 3)
-                    board[i][j] = 1;
+        for(int row = 0; row < board.length; row++) {
+            for(int col = 0; col < board[0].length; col++) {
+                if(board[row][col] == -1)
+                    board[row][col] = 0;
+                else if(board[row][col] == 2)
+                    board[row][col] = 1;
             }
         }
     }
     
-    private int getActive(int[][] board, int row, int col) {
-        int active = 0;
-        for(int[] direction : directions ) {
-            int newRow = row + direction[0];
-            int newCol = col + direction[1];
-            
-            if(newRow >= 0 && newRow < board.length && newCol >= 0 && newCol < board[0].length &&
-              (board[newRow][newCol] == 1 || board[newRow][newCol] == -2)){
-                active++;
-            }
-        }
-        return active;
+    private boolean isValidNeighbor(int x, int y, int[][] board) {
+        return (x >= 0 && x < board.length && y >= 0 && y < board[0].length);
     }
 }
